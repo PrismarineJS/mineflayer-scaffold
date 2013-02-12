@@ -427,7 +427,11 @@ function inject(bot) {
     });
     var tool = tools[0];
     if (!tool) {
-      changeState('off', 'itemRequired', okTools);
+      changeState('off', 'itemRequired', {
+        types: okTools,
+        type: 'tool',
+        targetBlock: blockToBreak,
+      });
       return false;
     }
     var done = false;
@@ -459,7 +463,10 @@ function inject(bot) {
     });
     var item = scaffoldingItems[0];
     if (!item) {
-      changeState('off', 'itemRequired', scaffoldBlockTypes);
+      changeState('off', 'itemRequired', {
+        types: scaffoldBlockTypes,
+        type: 'scaffolding',
+      });
       return false;
     }
     var done = false;
