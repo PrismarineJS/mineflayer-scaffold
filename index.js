@@ -159,7 +159,7 @@ function inject(bot) {
   var targetPoint;
 
   bot.on('death', function() {
-    changeState('off');
+    changeState('off', 'death');
   });
 
   var transition = {
@@ -304,7 +304,7 @@ function inject(bot) {
   };
 
   function stop() {
-    changeState('off');
+    changeState('off', 'stop');
   }
 
   function to(point) {
