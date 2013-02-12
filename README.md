@@ -3,6 +3,8 @@
 A library to help your mineflayer bot get to a specific point, even if it has
 to dig or build to get there.
 
+[YouTube Demo](http://youtu.be/jkg6psMUSE0)
+
 See [https://github.com/superjoe30/mineflayer/](https://github.com/superjoe30/mineflayer/)
 
 This plugin depends on
