@@ -1,0 +1,22 @@
+{
+  "name": "mineflayer-scaffold",
+  "version": "0.0.0",
+  "description": "mineflayer plugin to build or break blocks to get to a certain point",
+  "main": "index.js",
+  "devDependencies": {
+    "mineflayer": "0.0.26",
+    "mineflayer-navigate": "0.0.8"
+  },
+  "repository": "git://github.com/superjoe30/mineflayer-scaffold.git",
+  "keywords": [
+    "mineflayer",
+    "minecraft",
+    "bot",
+    "build",
+    "break",
+    "navigate",
+    "block"
+  ],
+  "author": "Andrew Kelley",
+  "license": "BSD"
+}
