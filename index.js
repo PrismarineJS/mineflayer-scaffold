@@ -153,6 +153,8 @@ function inject(bot) {
   bot.scaffold.to = to;
   bot.scaffold.resume = resume;
 
+  var navigateTimeout;
+
   var cleanups = [];
   // just a reference to bot.scaffold.targetPoint because it
   // is cumbersome to type
@@ -165,7 +167,7 @@ function inject(bot) {
   var transition = {
     walk: function () {
       // try to get to destination block
-      var results = bot.navigate.findPathSync(targetPoint, { timeout: 3000, });
+      var results = bot.navigate.findPathSync(targetPoint, { timeout: navigateTimeout, });
 
       // we don't even care if it worked. just get close and then re-evaluate.
       var done = false;
@@ -307,7 +309,9 @@ function inject(bot) {
     changeState('off', 'stop');
   }
 
-  function to(point) {
+  function to(point, options) {
+    options = options || {};
+    navigateTimeout = options.navigateTimeout == null ? 3000 : options.navigateTimeout;
     bot.scaffold.targetPoint = targetPoint = point.floored();
     resume();
   }
