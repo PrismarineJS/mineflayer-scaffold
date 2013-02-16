@@ -4,8 +4,12 @@
   "description": "mineflayer plugin to build or break blocks to get to a certain point",
   "main": "index.js",
   "devDependencies": {
-    "mineflayer": "0.0.26",
+    "mineflayer": "0.0.29",
     "mineflayer-navigate": "0.0.8"
+  },
+  "peerDependencies": {
+    "mineflayer": ">=0.0.29",
+    "mineflayer-navigate": ">=0.0.8"
   },
   "repository": "git://github.com/superjoe30/mineflayer-scaffold.git",
   "keywords": [

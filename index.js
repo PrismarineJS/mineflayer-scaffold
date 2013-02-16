@@ -1,10 +1,12 @@
-var EventEmitter = require('events').EventEmitter;
+var EventEmitter = require('events').EventEmitter
+  , assert = require('assert')
 
 module.exports = init;
 
 // instantiated from init
 var vec3;
 var sideVecs;
+var materials;
 
 // block types allowed to be used as scaffolding
 var scaffoldBlockTypes = {
@@ -13,114 +15,7 @@ var scaffoldBlockTypes = {
   87: true, // netherrack
 };
 
-var picks = {
-  285: true, // gold
-  270: true, // wood
-  274: true, // stone
-  257: true, // iron
-  278: true, // diamond
-};
-
-var picksIronUp = {
-  257: true, // iron
-  278: true, // diamond
-};
-
-var picksStoneUp = {
-  274: true, // stone
-  257: true, // iron
-  278: true, // diamond
-};
-
-var picksDiamond = {
-  278: true, // diamond
-};
-
-var shovels = {
-  256: true, // iron
-  269: true, // wood
-  273: true, // stone
-  277: true, // diamond
-  284: true, // gold
-};
-
-var axes = {
-  258: true, // iron
-  271: true, // wood
-  275: true, // stone
-  279: true, // diamond
-  286: true, // gold
-};
-
-var toolsForBlock = {
-  1: picks,     // stone
-  2: shovels,   // grass
-  3: shovels,   // dirt
-  4: picks,     // cobblestone
-  5: axes,      // wooden planks
-  12: shovels,  // sand
-  13: shovels,  // gravel
-  14: picksIronUp, // gold ore
-  15: picksStoneUp, // iron ore
-  16: picksStoneUp, // coal ore
-  17: axes,     // wood
-  21: picksIronUp, // lapis lazuli ore
-  22: picksIronUp, // lapis lazuli block
-  23: picks,    // dispenser
-  24: picks,    // sandstone
-  25: axes,     // note block
-  29: picks,    // sticky piston
-  33: picks,    // piston
-  41: picksStoneUp, // block of gold
-  42: picksStoneUp, // block of iron
-  43: picks,    // stone slab
-  44: picks,    // stone slab
-  45: picks,    // bricks
-  48: picks,    // moss stone
-  49: picksDiamond, // obsidian
-  53: axes,     // oak wood stairs
-  54: axes,     // chest
-  56: picksIronUp, // diamond ore
-  57: picksIronUp, // diamond block
-  58: axes,     // crafting table
-  60: shovels,  // farmland
-  61: picks,    // furnace
-  62: picks,    // furnace
-  64: axes,     // wooden door
-  67: picks,    // stone stairs
-  70: axes,     // wooden pressure plate
-  71: picksStoneUp, // iron door
-  72: picks,    // stone pressure plate
-  73: picksIronUp, // redstone ore
-  78: shovels,  // snow
-  80: shovels,  // snow block
-  81: axes,     // cactus
-  87: picks,    // netherrack
-  88: shovels,  // soul sand
-  89: picks,    // glowstone
-  97: picks,    // monster stone egg
-  98: picks,    // stone brick
-  101: picks,   // iron bars
-  108: picks,   // brick stairs
-  110: shovels, // mycelium
-  112: picks,   // nether brick
-  113: picks,   // nether brick fence
-  114: picks,   // nether brick stairs
-  116: picksDiamond, // enchantment table
-  125: axes,    // wood slab
-  126: axes,    // wood slab
-  128: picks,   // sandstone stairs
-  129: picksIronUp, // emerald ore
-  130: picksDiamond, // ender chest
-  133: picksIronUp, // block of emerald
-  134: axes, // spruce wood stairs
-  135: axes, // birch wood stairs
-  136: axes, // jungle wood stairs
-  139: picks, // cobble wall
-  145: picksIronUp, // anvil
-};
-
-var dangerBlockTypes = {
+var liquidBlockTypes = {
   8: true,  // water
   9: true,  // water
   10: true, // lava
@@ -142,6 +37,7 @@ function init(mineflayer) {
     vec3( 0,  0, -1),
     vec3( 0,  0,  1),
   ];
+  materials = mineflayer.materials;
   return inject;
 }
 
@@ -388,7 +284,7 @@ function inject(bot) {
         sideVec: sideVec,
       };
     }).filter(function(sideBlockAndVec) {
-      return dangerBlockTypes[sideBlockAndVec.block.type];
+      return liquidBlockTypes[sideBlockAndVec.block.type];
     });
     for (var i = 0; i < dangerBlockAndVecs.length; ++i) {
       if (! placeBlock(targetBlock, dangerBlockAndVecs[i].sideVec)) return;
@@ -409,7 +305,11 @@ function inject(bot) {
       if (done) return;
       done = true;
       if (err) {
-        changeState('off', 'errorDigging', err);
+        if (err.code === 'EDIGINTERRUPT') {
+          changeState(newState);
+        } else {
+          changeState('off', 'errorDigging', err);
+        }
       } else {
         changeState(newState);
       }
@@ -420,24 +320,40 @@ function inject(bot) {
       done = true;
     });
   }
-  function equipToolToBreak(blockToBreak) {
-    // return true if we're already good to go
-    var okTools = toolsForBlock[blockToBreak.type];
-    if (!okTools) return true; // anything goes
+  function canHarvest(block) {
+    var okTools = block.harvestTools;
+    if (!okTools) return true;
     if (bot.heldItem && okTools[bot.heldItem.type]) return true;
     // see if we have the tool necessary in inventory
     var tools = bot.inventory.items().filter(function(item) {
       return okTools[item.type];
     });
     var tool = tools[0];
-    if (!tool) {
+    return !!tool;
+  }
+  function equipToolToBreak(blockToBreak) {
+    if (! canHarvest(blockToBreak)) {
       changeState('off', 'itemRequired', {
-        types: okTools,
+        types: blockToBreak.harvestTools,
         type: 'tool',
         targetBlock: blockToBreak,
       });
       return false;
     }
+    // equip the most efficient tool that we have
+    var material = blockToBreak.material;
+    if (! material) return true;
+    var toolMultipliers = materials[material];
+    assert.ok(toolMultipliers);
+    var tools = bot.inventory.items().filter(function(item) {
+      return toolMultipliers[item.type] != null;
+    });
+    tools.sort(function(a, b) {
+      return toolMultipliers[b.type] - toolMultipliers[a.type];
+    });
+    var tool = tools[0];
+    if (!tool) return true;
+    if (bot.heldItem && bot.heldItem.type === tool.type) return true;
     var done = false;
     bot.equip(tool, 'hand', function(err) {
       if (done) return;
