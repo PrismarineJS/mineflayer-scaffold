@@ -49,6 +49,8 @@ function inject(bot) {
   bot.scaffold.to = to;
   bot.scaffold.resume = resume;
 
+  var onStop = noop;
+
   var navigateTimeout;
 
   var cleanups = [];
@@ -205,7 +207,16 @@ function inject(bot) {
     changeState('off', 'stop');
   }
 
-  function to(point, options) {
+  function to(point, options, cb) {
+    if (! cb) {
+      cb = options;
+      options = {};
+    }
+
+    var err = new Error('scaffold: interrupt');
+    err.code = 'interrupt';
+    onStop(err);
+    onStop = cb || noop;
     options = options || {};
     navigateTimeout = options.navigateTimeout == null ? 3000 : options.navigateTimeout;
     bot.scaffold.targetPoint = targetPoint = point.floored();
@@ -224,6 +235,17 @@ function inject(bot) {
     cleanups.forEach(function(fn) { fn(); });
     cleanups = [];
     bot.scaffold.emit('changeState', oldState, newState, reason, data);
+    if (newState === 'off') {
+      if (reason === 'success') {
+        onStop();
+      } else {
+        var err = new Error("scaffold: " + reason);
+        err.code = reason;
+        err.data = data;
+        onStop(err);
+      }
+      onStop = noop;
+    }
     transition[newState]();
   }
   function moveToBlockCenter() {

@@ -23,7 +23,13 @@ bot.on('chat', function(username, message) {
   if (username === bot.username) return;
   var target = bot.players[username].entity;
   if (message === 'come') {
-    bot.scaffold.to(target.position);
+    bot.scaffold.to(target.position, function(err) {
+      if (err) {
+        bot.chat("didn't make it: " + err.code);
+      } else {
+        bot.chat("made it!");
+      }
+    });
   }
 });
 ```
