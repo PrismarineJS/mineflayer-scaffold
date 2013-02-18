@@ -315,10 +315,7 @@ function inject(bot) {
     var fallDanger = !!fallingBlockTypes[aboveBlock.type];
 
     if (! bot.canDigBlock(targetBlock) || fallDanger) {
-      // set a new target point to try a different angle
-      targetPoint.set(targetPoint.x + fuzz(), targetPoint.y + fuzz(5), targetPoint.z + fuzz() );
-      if (targetPoint.y < 10) targetPoint.y = 10;
-      changeState('improvePosition');
+      changeState('off', 'danger', targetBlock);
       return;
     }
     if (! equipToolToBreak(targetBlock)) return;
@@ -430,7 +427,3 @@ function inject(bot) {
 }
 
 function noop() {}
-function fuzz(offset) {
-  offset = offset || 0;
-  return Math.floor(Math.random() * 10) - 5 + offset;
-}
