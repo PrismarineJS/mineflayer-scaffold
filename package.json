@@ -1,6 +1,6 @@
 {
   "name": "mineflayer-scaffold",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "description": "mineflayer plugin to build or break blocks to get to a certain point",
   "main": "index.js",
   "devDependencies": {
