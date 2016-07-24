@@ -1,15 +1,15 @@
 {
   "name": "mineflayer-scaffold",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "mineflayer plugin to build or break blocks to get to a certain point",
   "main": "index.js",
   "devDependencies": {
-    "mineflayer": "0.0.29",
-    "mineflayer-navigate": "0.0.8"
+    "mineflayer": "1.7.5",
+    "mineflayer-navigate": "0.0.9"
   },
   "peerDependencies": {
-    "mineflayer": ">=0.0.29",
-    "mineflayer-navigate": ">=0.0.8"
+    "mineflayer": ">=0.0.35",
+    "mineflayer-navigate": ">=0.0.9"
   },
   "repository": "git://github.com/superjoe30/mineflayer-scaffold.git",
   "keywords": [
