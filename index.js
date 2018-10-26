@@ -28,7 +28,7 @@ var fallingBlockTypes = {
 };
 
 function init(mineflayer) {
-  vec3 = mineflayer.vec3;
+  vec3 = require("vec3");
   sideVecs = [
     vec3(-1,  0,  0),
     vec3( 1,  0,  0),
