@@ -2,7 +2,21 @@ var mineflayer = require('mineflayer');
 var vec3 = mineflayer.vec3;
 var navigatePlugin = require('mineflayer-navigate')(mineflayer);
 var scaffoldPlugin = require('../')(mineflayer);
-var bot = mineflayer.createBot();
+
+
+// var bot = mineflayer.createBot();
+if(process.argv.length < 4 || process.argv.length > 6) {
+  console.log("Usage : node echo.js <host> <port> [<name>] [<password>]");
+  process.exit(1);
+}
+var bot = mineflayer.createBot({
+  host: process.argv[2],
+  port: parseInt(process.argv[3]),
+  username: process.argv[4] ? process.argv[4] : "echo",
+  password: process.argv[5],
+  verbose: true,
+});
+
 navigatePlugin(bot);
 scaffoldPlugin(bot);
 bot.scaffold.on('changeState', function(oldState, newState, reason, data) {

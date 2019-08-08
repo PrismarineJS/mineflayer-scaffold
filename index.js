@@ -279,8 +279,9 @@ function inject(bot) {
     } else if (floor.boundingBox === 'empty') {
       if (! equipBuildingBlock()) return;
       var myFloor = bot.blockAt(bot.entity.position.offset(0, -1, 0));
-      if (! placeBlock(myFloor, dir)) return;
-      changeState('improvePosition');
+      placeBlock(myFloor, dir, function(success){
+        changeState('improvePosition');
+      });
     } else {
       var done = false;
       bot.navigate.walk([newPos], function(stopReason) {
@@ -389,9 +390,15 @@ function inject(bot) {
       done = true;
     });
   }
-  function placeBlock(referenceBlock, dir) {
+  function placeBlock(referenceBlock, dir, cb) {
+    cb = cb || noop;
     if (! equipBuildingBlock()) return false;
-    bot.placeBlock(referenceBlock, dir);
+    bot.placeBlock(referenceBlock, dir, function(err){
+      if(err) 
+        cb(false);
+      else
+        cb(true);
+    });
     return true;
   }
   function equipBuildingBlock() {
