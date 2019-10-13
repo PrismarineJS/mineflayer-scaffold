@@ -37,12 +37,11 @@ function init (mineflayer) {
     vec3(0, 0, -1),
     vec3(0, 0, 1)
   ]
-  materials = require('minecraft-data')('1.12.2')
   return inject
 }
 
 function inject (bot) {
-  materials = require('minecraft-data')(bot.version)
+  materials = require('minecraft-data')(bot.version).materials
   bot.scaffold = new EventEmitter()
   bot.scaffold.state = 'off'
   bot.scaffold.targetPoint = null
