@@ -37,11 +37,12 @@ function init (mineflayer) {
     vec3(0, 0, -1),
     vec3(0, 0, 1)
   ]
-  materials = mineflayer.materials
+  materials = require('minecraft-data')('1.12.2')
   return inject
 }
 
 function inject (bot) {
+  materials = require('minecraft-data')(bot.version)
   bot.scaffold = new EventEmitter()
   bot.scaffold.state = 'off'
   bot.scaffold.targetPoint = null
@@ -280,6 +281,9 @@ function inject (bot) {
       if (!equipBuildingBlock()) return
       var myFloor = bot.blockAt(bot.entity.position.offset(0, -1, 0))
       placeBlock(myFloor, dir, function (success) {
+        if (!success) {
+          return changeState('off', 'blockNotPlaced')
+        }
         changeState('improvePosition')
       })
     } else {
