@@ -114,7 +114,7 @@ function inject (bot) {
       moveInDirection(vec3(-1, 0, 0))
     },
     increaseY: function () {
-      var groundBlock = bot.blockAt(bot.entity.position.offset(0, -1, 0))
+      // var groundBlock = bot.blockAt(bot.entity.position.offset(0, -1, 0))
       if (!bot.entity.onGround) {
         // we're falling. nothing to do except wait.
         var done = false
