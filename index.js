@@ -6,7 +6,6 @@ module.exports = init;
 // instantiated from init
 var vec3;
 var sideVecs;
-var mcData=require("minecraft-data")("1.12.2");
 var materials;
 
 // block types allowed to be used as scaffolding
@@ -38,11 +37,12 @@ function init(mineflayer) {
     vec3( 0,  0, -1),
     vec3( 0,  0,  1),
   ];
-  materials = mcData.materials;
   return inject;
 }
 
 function inject(bot) {
+  var mcData=require("minecraft-data")(bot.version);
+  materials = mcData.materials;
   bot.scaffold = new EventEmitter();
   bot.scaffold.state = 'off';
   bot.scaffold.targetPoint = null;
