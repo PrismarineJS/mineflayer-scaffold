@@ -6,7 +6,7 @@ module.exports = init;
 // instantiated from init
 var vec3;
 var sideVecs;
-var mcData=require("minecraft-data");
+var mcData=require("minecraft-data")("1.12.2");
 var materials;
 
 // block types allowed to be used as scaffolding
