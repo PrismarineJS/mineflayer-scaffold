@@ -143,8 +143,8 @@ function inject(bot) {
       // jump and build a block down below
       bot.setControlState('jump', true);
       var targetBlock = bot.blockAt(bot.entity.position.offset(0, -1, 0));
-      var jumpY = bot.entity.position.y + 1;
       bot.on('move', placeIfHighEnough);
+      var jumpY = bot.entity.position.y + 1;
       changeState('jumping');
       cleanups.push(function() {
         bot.removeListener('move', placeIfHighEnough);
