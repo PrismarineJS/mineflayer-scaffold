@@ -1,5 +1,7 @@
 # mineflayer-scaffold
 
+Depreciated, prefer using https://github.com/PrismarineJS/mineflayer-pathfinder
+
 A library to help your mineflayer bot get to a specific point, even if it has
 to dig or build to get there.
 
